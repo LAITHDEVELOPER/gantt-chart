@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<!-- saved from url=(0087)file:///C:/Users/zim/Downloads/Interactive%20Gantt%20Chart%20-%20system%20analysis.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Gantt Chart - system analysis</title>
+  <meta name="description" content="Turn project descriptions into professional Gantt charts instantly. AI-powered planning tool with drag-and-drop editor. Start free—no credit card required.">
+  <meta name="author" content="Gantt Chart AI">
+  <meta property="og:image" content="/static/assets/images/og-image.png">
+  <link rel="canonical" href="https://www.ganttchart.ai/gantt_chart/26337">
+
+  <!-- Favicon -->
+  <link rel="icon" href="https://ganttchart.ai/static/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="https://ganttchart.ai/static/favicon.svg">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/modern.css">
+  <link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/hero.css">
+  <link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/misc.css">
+  <link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/forms.css">
+  <link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/cookie.css">
+  <link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/faq.css">
+  <link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/integrations.css">
+  
+<!-- Vue 3 Global Dependency -->
+<script src="./Interactive Gantt Chart - system analysis_files/bundle.tracing.replay.min.js.download" crossorigin="anonymous"></script><script src="./Interactive Gantt Chart - system analysis_files/bundle.tracing.replay.min(1).js.download" crossorigin="anonymous"></script><script src="./Interactive Gantt Chart - system analysis_files/vue.global.js.download"></script>
+
+<!-- Gantt Editor Library -->
+<link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/gantt.css">
+<link rel="stylesheet" href="./Interactive Gantt Chart - system analysis_files/gantt-editor-vue.css">
+<script src="./Interactive Gantt Chart - system analysis_files/gantt-editor.js.download"></script>
+
+<style>
+    /* Fix Z-Index issues with Navbar */
+    .navbar {
+        position: relative;
+        /* z-index: 3000 !important; */
+        /* Ensure it stays above Gantt Editor (z-index ~2000) */
+    }
+
+    body {
+        background-color: var(--gantt-header-bg);
+        /* Use shared bg */
+    }
+
+    /* Page Wrapper */
+    .gantt-page-wrapper {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        display: block;
+    }
+
+    /* Common container width */
+    .gantt-container-width {
+        max-width: 1400px;
+        width: 100%;
+        padding: 0 2rem;
+        box-sizing: border-box;
+        margin: 0 auto;
+    }
+
+    /* Top content wrapper */
+    .gantt-top-content {
+        padding-top: 2rem;
+        padding-bottom: 5rem;
+    }
+
+    #gantt-app-container {
+        min-height: 80vh;
+        margin-top: 0;
+    }
+
+    /* Fix sticky header positioning */
+    .gantt-sticky-header-wrapper {
+        top: 0 !important;
+        /* Stick to very top of viewport, not offset by navbar */
+        /* z-index: 150 !important; */
+        /* Above table content but below modals */
+    }
+
+    /* --- Styles ported from standalone_gantt.html --- */
+
+    /* Global Button Styles */
+    .btn {
+        padding: 0.5rem 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: inherit;
+        text-decoration: none;
+        line-height: 1.25rem;
+    }
+
+    .btn-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        display: inline-block;
+    }
+
+    .btn-icon svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    .btn-primary {
+        background-color: var(--gantt-primary);
+        color: white;
+        border-color: transparent;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--gantt-primary-light);
+    }
+
+    .btn-secondary {
+        background-color: white;
+        color: var(--gantt-text);
+        border-color: var(--gantt-border);
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--gantt-row-hover);
+        border-color: #d1d5db;
+    }
+
+    .btn-purple {
+        background-color: #7c3aed;
+        /* Violet 600 */
+        color: white;
+        border-color: transparent;
+    }
+
+    .btn-purple:hover {
+        background-color: #6d28d9;
+        /* Violet 700 */
+    }
+
+    /* Project Header Styles */
+    .project-header {
+        margin-bottom: 2rem;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .project-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--gantt-text);
+        margin: 0;
+    }
+
+    .project-dates {
+        color: var(--gantt-text-muted);
+        font-size: 0.9375rem;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: var(--gantt-bg);
+        border-radius: 0.75rem;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--gantt-border);
+    }
+
+    .modal-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--gantt-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--gantt-text);
+    }
+
+    .close-modal {
+        background: transparent;
+        border: none;
+        font-size: 1.5rem;
+        line-height: 1;
+        color: var(--gantt-text-muted);
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 0.25rem;
+    }
+
+    .close-modal:hover {
+        background-color: var(--gantt-row-hover);
+        color: var(--gantt-text);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+    }
+
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        background-color: var(--gantt-header-bg);
+        border-top: 1px solid var(--gantt-border);
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+    }
+
+    .credit-warning {
+        font-size: 0.8rem;
+        color: var(--gantt-text-muted);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--gantt-text);
+        margin-bottom: 0.25rem;
+    }
+
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.875rem;
+        font-family: inherit;
+        line-height: 1.5;
+        color: var(--gantt-text);
+        background-color: var(--gantt-bg);
+        background-clip: padding-box;
+        border: 1px solid var(--gantt-border);
+        border-radius: 0.375rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        box-sizing: border-box;
+    }
+
+    /* Ensure date inputs look correct */
+    input[type="date"].form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        min-height: 38px;
+    }
+
+    .form-control:hover {
+        border-color: #d1d5db;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--ge-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .form-control.form-input {
+        height: 2.5rem;
+    }
+
+    /* Character counter relative to textarea wrapper */
+    .textarea-wrapper {
+        position: relative;
+    }
+
+    .character-counter {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        font-size: 0.7rem;
+        color: var(--ge-text-muted);
+        background: rgba(255, 255, 255, 0.9);
+        padding: 0.1rem 0.3rem;
+        border-radius: 0.2rem;
+        pointer-events: none;
+    }
+
+    .character-counter.warning {
+        color: #D97706;
+    }
+
+    .character-counter.danger {
+        color: #DC2626;
+    }
+
+    /* Google Sheets Button Styles */
+    .btn-sheets {
+        background-color: #0F9D58;
+        color: white;
+        border-color: transparent;
+    }
+
+    .btn-sheets:hover {
+        background-color: #0b8043;
+        color: white;
+    }
+
+    .btn.loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .btn .spinner {
+        display: none;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid transparent;
+        border-top-color: currentColor;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    .btn.loading .spinner {
+        display: inline-block;
+    }
+
+    .btn.loading .btn-icon {
+        display: none;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Success state for button */
+    .btn.success {
+        background-color: #10B981;
+        border-color: #10B981;
+        color: white;
+    }
+
+    .read-only-notice {
+        background-color: #fffbeb;
+        border: 1px solid #fcd34d;
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .read-only-notice-content {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        flex-wrap: wrap;
+    }
+
+    .read-only-notice-icon {
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .read-only-notice-text {
+        font-size: 0.875rem;
+        color: #92400e;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .read-only-notice-cta {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.875rem;
+        background-color: #f59e0b;
+        color: #fff;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background-color 0.15s ease;
+    }
+
+    .read-only-notice-cta:hover {
+        background-color: #d97706;
+        color: #fff;
+    }
+</style>
+
+
+  <script src="./Interactive Gantt Chart - system analysis_files/sentry.min.js.download"></script>
+  <script src="./Interactive Gantt Chart - system analysis_files/sentry_config.js.download"></script>
+  <!-- OpenPanel analytics -->
+  <script>
+    // Always initialize a queue for OpenPanel to prevent window.op type errors before consent state is evaluated
+    window.op = window.op || function (...args) { (window.op.q = window.op.q || []).push(args); };
+
+    // Initialize OpenPanel only if consent is granted
+    if (localStorage.getItem('cookieConsent') === 'accepted') {
+      window.op('init', {
+        apiUrl: 'https://openpanel.ganttchart.ai/api',
+        clientId: '89de9814-8b51-45c3-9591-45cdc2b885d6',
+        secretKey: 'sec_cc83fae016d36e1b87d3',
+        trackScreenViews: true,
+        trackOutgoingLinks: true,
+        trackAttributes: true,
+      });
+    } else if (localStorage.getItem('cookieConsent') === 'denied') {
+      window.op = function () { };
+    }
+  </script>
+
+  <script async="" src="./Interactive Gantt Chart - system analysis_files/op1.js.download"></script>
+
+</head>
+
+<body class="user-authenticated" style="">
+  <nav class="navbar">
+    
+  </nav>
+
+  <!-- Flash Messages -->
+  <div class="toast-container">
+    
+    
+    
+  </div>
+
+  <main class="grid-background">
+<div class="gantt-page-wrapper">
+    <!-- Main Gantt App Container -->
+    <div class="gantt-top-content gantt-container-width">
+        <!-- New Project Header including 'Edit' button -->
+        <div class="project-header">
+            <div class="header-top">
+                <h1 class="project-title">system analysis</h1>
+                <div class="header-actions">
+                    
+                    
+                    
+                </div>
+            </div>
+            
+        </div>
+
+        
+
+        <div id="gantt-app-container" data-v-app=""><div class="gantt-editor"><div class="gantt-toolbar"><div class="toolbar-group"><div class="view-modes"><button class="gantt-view-mode-btn">Day</button><button class="gantt-view-mode-btn active">Week</button><button class="gantt-view-mode-btn">Month</button></div><div class="toolbar-divider"></div><button class="gantt-btn gantt-btn-icon-text mobile-view-toggle" title="Hide Table"><span class="icon">◫</span><span class="text">Hide Table</span></button></div><div class="toolbar-group"><div class="filter-group"><div class="filter-with-manage"><select class="filter-select"><option value="">All Workstreams</option><option value="Planning">Planning</option><option value="System Analysis">System Analysis</option><option value="Design">Design</option><option value="Frontend Development">Frontend Development</option><option value="Backend Development">Backend Development</option><option value="Testing">Testing</option><option value="Deployment">Deployment</option><option value="Documentation">Documentation</option><option value="Training">Training</option></select><div class="manage-dropdown"><button class="gantt-manage-btn" title="Manage workstreams"><span class="manage-icon">⚙</span></button><!----></div></div><div class="filter-with-manage"><select class="filter-select"><option value="">All Assignees</option><option value="Project Team">Project Team</option><option value="Engineering Team">Engineering Team</option><option value="Design Team">Design Team</option><option value="Frontend Team">Frontend Team</option><option value="Backend Team">Backend Team</option><option value="QA Team">QA Team</option><option value="DevOps Team">DevOps Team</option><option value="Documentation Team">Documentation Team</option><option value="Training Team">Training Team</option></select><div class="manage-dropdown"><button class="gantt-manage-btn" title="Manage team members"><span class="manage-icon">⚙</span></button><!----></div></div></div></div><div class="toolbar-group"><div class="dropdown-container"><button class="gantt-btn gantt-btn-secondary gantt-btn-icon-text"><span class="text">View Options</span><span class="icon-down">▼</span></button><!----></div><div class="toolbar-divider"></div><div data-v-20288610="" class="locale-selector"><div data-v-20288610="" class="locale-selector-trigger" title="Current locale: English (US)"><span data-v-20288610="" class="globe-icon">🌐</span><span data-v-20288610="" class="current-code">US</span></div><!----></div><!----><button class="gantt-btn save-btn gantt-btn-secondary" title="Save changes"> Save </button><div class="export-dropdown"><button class="gantt-btn gantt-btn-secondary"> Export </button><!----></div><button class="gantt-btn gantt-btn-primary"> + Task </button></div></div><div class="gantt-sticky-header-wrapper" style="--gantt-table-width: 500px;"><div class="gantt-header-row"><div class="gantt-table" style="width: 500px; overflow-x: hidden;"><div class="table-header"><div class="th task-name" style="width: 357px;"> Task <div class="column-resizer"></div></div><div class="th task-workstream" style="width: 195px;"> Workstream <div class="column-resizer"></div></div><div class="th task-assignees" style="width: 80px;"> Assignees <div class="column-resizer"></div></div><div class="th task-dates">Start</div><div class="th task-dates">End</div><div class="th task-dependencies">Depends On</div><div class="th task-actions"></div></div><!----></div><div class="gantt-resizer header-resizer"></div><div class="gantt-chart"><div class="chart-header" style="width: 2520px;"><div class="header-cell month-start" style="width: 40px;"><span class="month-label">Apr</span><span class="day-label">17</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">18</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">19</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">20</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">21</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">22</span></div><div class="header-cell today" style="width: 40px;"><!----><span class="day-label">23</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">24</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">25</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">26</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">27</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">28</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">29</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">30</span></div><div class="header-cell month-start" style="width: 40px;"><span class="month-label">May</span><span class="day-label">1</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">2</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">3</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">4</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">5</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">6</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">7</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">8</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">9</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">10</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">11</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">12</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">13</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">14</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">15</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">16</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">17</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">18</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">19</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">20</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">21</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">22</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">23</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">24</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">25</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">26</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">27</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">28</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">29</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">30</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">31</span></div><div class="header-cell month-start" style="width: 40px;"><span class="month-label">Jun</span><span class="day-label">1</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">2</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">3</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">4</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">5</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">6</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">7</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">8</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">9</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">10</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">11</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">12</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">13</span></div><div class="header-cell weekend" style="width: 40px;"><!----><span class="day-label">14</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">15</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">16</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">17</span></div><div class="header-cell" style="width: 40px;"><!----><span class="day-label">18</span></div></div><!----></div></div></div><div class="gantt-scroll-container" style="--gantt-table-width: 500px;"><div class="gantt-body-row"><div class="gantt-table" style="width: 500px; overflow-x: auto;"><!----><div class="table-body"><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(236, 72, 153);"><span class="workstream-header-content">Planning <span class="task-count">(6)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Document QA metrics requirements</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Planning" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Project Team" style="background-color: rgb(20, 184, 166);">PT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/24"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/27"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="no-deps">Click to add</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Identify key performance indicators</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Planning" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Project Team" style="background-color: rgb(20, 184, 166);">PT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/28"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/29"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Define tracking system scope</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Planning" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Project Team" style="background-color: rgb(20, 184, 166);">PT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/30"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/30"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Gather stakeholder requirements sessions</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Planning" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Project Team" style="background-color: rgb(20, 184, 166);">PT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/1"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/4"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Analyze competitor tracking solutions</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Planning" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Project Team" style="background-color: rgb(20, 184, 166);">PT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/28"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="4/29"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Create requirements specification document</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Planning" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Project Team" style="background-color: rgb(20, 184, 166);">PT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/5"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/6"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">2 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(236, 72, 153);"><span class="workstream-header-content">System Analysis <span class="task-count">(3)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Design system architecture overview</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="System Analysis" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Engineering Team" style="background-color: rgb(132, 204, 22);">ET</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/7"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/8"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Define database schema structure</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="System Analysis" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Engineering Team" style="background-color: rgb(132, 204, 22);">ET</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/11"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/12"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Plan data integration with Sheets</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="System Analysis" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Engineering Team" style="background-color: rgb(132, 204, 22);">ET</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/13"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/13"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(156, 39, 176);"><span class="workstream-header-content">Design <span class="task-count">(2)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Design dashboard wireframes mockups</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Design" style="border-left-color: rgb(156, 39, 176);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Design Team" style="background-color: rgb(34, 197, 94);">DT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/7"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/8"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Create UI component specifications</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Design" style="border-left-color: rgb(156, 39, 176);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Design Team" style="background-color: rgb(34, 197, 94);">DT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/11"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/12"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(236, 72, 153);"><span class="workstream-header-content">Frontend Development <span class="task-count">(3)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Develop responsive dashboard HTML</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Frontend Development" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Frontend Team" style="background-color: rgb(16, 185, 129);">FT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/13"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/15"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Build dashboard styling CSS</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Frontend Development" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Frontend Team" style="background-color: rgb(16, 185, 129);">FT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/18"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/19"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Implement dashboard interactivity JavaScript</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Frontend Development" style="border-left-color: rgb(236, 72, 153);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Frontend Team" style="background-color: rgb(16, 185, 129);">FT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/20"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/22"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(100, 116, 139);"><span class="workstream-header-content">Backend Development <span class="task-count">(5)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Develop Google Sheets integration API</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Backend Development" style="border-left-color: rgb(100, 116, 139);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Backend Team" style="background-color: rgb(14, 165, 233);">BT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/14"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/18"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Create data synchronization mechanism</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Backend Development" style="border-left-color: rgb(100, 116, 139);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Backend Team" style="background-color: rgb(14, 165, 233);">BT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/19"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/20"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Build KPI calculation engine</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Backend Development" style="border-left-color: rgb(100, 116, 139);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Backend Team" style="background-color: rgb(14, 165, 233);">BT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/21"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/25"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Implement real-time data refresh</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Backend Development" style="border-left-color: rgb(100, 116, 139);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Backend Team" style="background-color: rgb(14, 165, 233);">BT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/26"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/27"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Configure automated data validation rules</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Backend Development" style="border-left-color: rgb(100, 116, 139);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Backend Team" style="background-color: rgb(14, 165, 233);">BT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/28"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/28"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(99, 102, 241);"><span class="workstream-header-content">Testing <span class="task-count">(4)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Conduct system functionality testing</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Testing" style="border-left-color: rgb(99, 102, 241);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="QA Team" style="background-color: rgb(59, 130, 246);">QT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="5/29"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/1"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">2 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Perform usability testing sessions</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Testing" style="border-left-color: rgb(99, 102, 241);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="QA Team" style="background-color: rgb(59, 130, 246);">QT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/2"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/3"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Execute performance load testing</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Testing" style="border-left-color: rgb(99, 102, 241);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="QA Team" style="background-color: rgb(59, 130, 246);">QT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/2"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/3"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Validate data accuracy compliance</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Testing" style="border-left-color: rgb(99, 102, 241);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="QA Team" style="background-color: rgb(59, 130, 246);">QT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/4"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/4"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">2 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(16, 185, 129);"><span class="workstream-header-content">Deployment <span class="task-count">(1)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Deploy system to production</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Deployment" style="border-left-color: rgb(16, 185, 129);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="DevOps Team" style="background-color: rgb(99, 102, 241);">DT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/5"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/5"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(244, 63, 94);"><span class="workstream-header-content">Documentation <span class="task-count">(1)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Create user documentation guide</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Documentation" style="border-left-color: rgb(244, 63, 94);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Documentation Team" style="background-color: rgb(236, 72, 153);">DT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/8"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/9"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div><div class="workstream-group-header" draggable="true" style="border-left-color: rgb(132, 204, 22);"><span class="workstream-header-content">Training <span class="task-count">(1)</span><button class="workstream-add-task-btn" title="Add task to this workstream"> + Task </button></span></div><div data-v-258e87c1="" class="table-row" draggable="true"><div data-v-258e87c1="" class="td task-name" style="width: 357px; flex: 0 0 auto;"><span data-v-258e87c1="" class="editable-cell">Conduct staff training sessions</span></div><div data-v-258e87c1="" class="td task-workstream" style="width: 195px;"><select data-v-258e87c1="" class="workstream-select" value="Training" style="border-left-color: rgb(132, 204, 22);"><option data-v-258e87c1="" value="">None</option><option data-v-258e87c1="" value="Planning">Planning</option><option data-v-258e87c1="" value="System Analysis">System Analysis</option><option data-v-258e87c1="" value="Design">Design</option><option data-v-258e87c1="" value="Frontend Development">Frontend Development</option><option data-v-258e87c1="" value="Backend Development">Backend Development</option><option data-v-258e87c1="" value="Testing">Testing</option><option data-v-258e87c1="" value="Deployment">Deployment</option><option data-v-258e87c1="" value="Documentation">Documentation</option><option data-v-258e87c1="" value="Training">Training</option></select></div><div data-v-258e87c1="" class="td task-assignees" style="width: 80px;"><div data-v-258e87c1="" class="assignees-display"><div data-v-258e87c1="" class="assignee-avatar" title="Training Team" style="background-color: rgb(236, 72, 153);">TT</div><!----></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/10"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dates"><div data-v-dd8180c3="" data-v-258e87c1="" class="date-picker compact"><div data-v-dd8180c3="" class="date-picker-trigger"><input data-v-dd8180c3="" type="text" readonly="" class="date-input compact" value="6/11"><svg data-v-dd8180c3="" class="calendar-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect data-v-dd8180c3="" x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line data-v-dd8180c3="" x1="16" y1="2" x2="16" y2="6"></line><line data-v-dd8180c3="" x1="8" y1="2" x2="8" y2="6"></line><line data-v-dd8180c3="" x1="3" y1="10" x2="21" y2="10"></line></svg></div><!--teleport start--><!--teleport end--></div></div><div data-v-258e87c1="" class="td task-dependencies"><div data-v-258e87c1="" class="dependencies-display"><span data-v-258e87c1="" class="dep-count">1 task(s)</span></div></div><div data-v-258e87c1="" class="td task-actions"><button data-v-258e87c1="" class="gantt-delete-btn" title="Delete task"> × </button></div></div></div></div><div class="gantt-resizer"><div class="gantt-resizer-handle"></div></div><div class="gantt-chart"><!----><div class="chart-body" style="width: 2520px;"><div class="grid-lines"><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line today" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line weekend" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div><div class="grid-line" style="width: 40px;"></div></div><div class="today-marker" style="left: 260px;"></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 280px; width: 520px; background-color: rgba(236, 72, 153, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(236, 72, 153, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 280px; width: 160px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Document QA metrics requirements</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 440px; width: 80px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Identify key performance indicators</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 520px; width: 40px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Define tracking system scope</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 560px; width: 160px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Gather stakeholder requirements sessions</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 440px; width: 80px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Analyze competitor tracking solutions</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 720px; width: 80px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Create requirements specification document</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 800px; width: 280px; background-color: rgba(236, 72, 153, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(236, 72, 153, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 800px; width: 80px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Design system architecture overview</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 960px; width: 80px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Define database schema structure</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1040px; width: 40px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Plan data integration with Sheets</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 800px; width: 240px; background-color: rgba(156, 39, 176, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(156, 39, 176, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 800px; width: 80px; background-color: rgb(156, 39, 176);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Design dashboard wireframes mockups</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 960px; width: 80px; background-color: rgb(156, 39, 176);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Create UI component specifications</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 1040px; width: 400px; background-color: rgba(236, 72, 153, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(236, 72, 153, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1040px; width: 120px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Develop responsive dashboard HTML</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1240px; width: 80px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Build dashboard styling CSS</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1320px; width: 120px; background-color: rgb(236, 72, 153);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Implement dashboard interactivity JavaScript</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 1080px; width: 600px; background-color: rgba(100, 116, 139, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(100, 116, 139, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1080px; width: 200px; background-color: rgb(100, 116, 139);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Develop Google Sheets integration API</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1280px; width: 80px; background-color: rgb(100, 116, 139);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Create data synchronization mechanism</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1360px; width: 200px; background-color: rgb(100, 116, 139);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Build KPI calculation engine</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1560px; width: 80px; background-color: rgb(100, 116, 139);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Implement real-time data refresh</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1640px; width: 40px; background-color: rgb(100, 116, 139);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Configure automated data validation rules</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 1680px; width: 280px; background-color: rgba(99, 102, 241, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(99, 102, 241, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1680px; width: 160px; background-color: rgb(99, 102, 241);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Conduct system functionality testing</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1840px; width: 80px; background-color: rgb(99, 102, 241);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Perform usability testing sessions</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1840px; width: 80px; background-color: rgb(99, 102, 241);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Execute performance load testing</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1920px; width: 40px; background-color: rgb(99, 102, 241);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Validate data accuracy compliance</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 1960px; width: 40px; background-color: rgba(16, 185, 129, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(16, 185, 129, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 1960px; width: 40px; background-color: rgb(16, 185, 129);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Deploy system to production</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 2080px; width: 80px; background-color: rgba(244, 63, 94, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(244, 63, 94, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 2080px; width: 80px; background-color: rgb(244, 63, 94);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Create user documentation guide</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><div class="chart-row workstream-header-row"><div class="summary-bar" style="left: 2160px; width: 80px; background-color: rgba(132, 204, 22, 0.15);"><div class="summary-progress" style="width: 0%; background-color: rgba(132, 204, 22, 0.6);"></div></div></div><div class="chart-row"><div class="gantt-bar" style="left: 2160px; width: 80px; background-color: rgb(132, 204, 22);"><div class="bar-progress" style="width: 0%;"><div class="progress-handle"></div></div><span class="bar-label">Conduct staff training sessions</span><div class="resize-handle resize-left"></div><div class="resize-handle resize-right"></div></div></div><svg class="dependency-arrows" width="2520" height="1400"><defs><marker id="arrowhead" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#94a3b8"></polygon></marker><marker id="arrowhead-highlighted" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="0 0, 6 2.5, 0 5" fill="#3b82f6"></polygon></marker></defs><path d="M 440 60L 455 60Q 460 60 460 65L 460 75Q 460 80 455 80L 425 80Q 420 80 420 85L 420 95Q 420 100 425 100L 440 100" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 520 100L 535 100Q 540 100 540 105L 540 115Q 540 120 535 120L 505 120Q 500 120 500 125L 500 135Q 500 140 505 140L 520 140" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 560 140L 575 140Q 580 140 580 145L 580 155Q 580 160 575 160L 545 160Q 540 160 540 165L 540 175Q 540 180 545 180L 560 180" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 440 60L 455 60Q 460 60 460 65L 460 135Q 460 140 455 140L 425 140Q 420 140 420 145L 420 215Q 420 220 425 220L 440 220" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 720 180L 735 180Q 740 180 740 185L 740 215Q 740 220 735 220L 705 220Q 700 220 700 225L 700 255Q 700 260 705 260L 720 260" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 520 220L 535 220Q 540 220 540 225L 540 255Q 540 260 545 260L 720 260" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 800 260L 815 260Q 820 260 820 265L 820 295Q 820 300 815 300L 785 300Q 780 300 780 305L 780 335Q 780 340 785 340L 800 340" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 880 340L 895 340Q 900 340 900 345L 900 375Q 900 380 905 380L 960 380" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1040 380L 1055 380Q 1060 380 1060 385L 1060 395Q 1060 400 1055 400L 1025 400Q 1020 400 1020 405L 1020 415Q 1020 420 1025 420L 1040 420" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 800 260L 815 260Q 820 260 820 265L 820 375Q 820 380 815 380L 785 380Q 780 380 780 385L 780 495Q 780 500 785 500L 800 500" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 880 500L 895 500Q 900 500 900 505L 900 535Q 900 540 905 540L 960 540" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1040 540L 1055 540Q 1060 540 1060 545L 1060 575Q 1060 580 1055 580L 1025 580Q 1020 580 1020 585L 1020 615Q 1020 620 1025 620L 1040 620" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1160 620L 1175 620Q 1180 620 1180 625L 1180 655Q 1180 660 1185 660L 1240 660" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1320 660L 1335 660Q 1340 660 1340 665L 1340 675Q 1340 680 1335 680L 1305 680Q 1300 680 1300 685L 1300 695Q 1300 700 1305 700L 1320 700" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1080 420L 1095 420Q 1100 420 1100 425L 1100 595Q 1100 600 1095 600L 1065 600Q 1060 600 1060 605L 1060 775Q 1060 780 1065 780L 1080 780" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1280 780L 1295 780Q 1300 780 1300 785L 1300 795Q 1300 800 1295 800L 1265 800Q 1260 800 1260 805L 1260 815Q 1260 820 1265 820L 1280 820" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1360 820L 1375 820Q 1380 820 1380 825L 1380 835Q 1380 840 1375 840L 1345 840Q 1340 840 1340 845L 1340 855Q 1340 860 1345 860L 1360 860" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1560 860L 1575 860Q 1580 860 1580 865L 1580 875Q 1580 880 1575 880L 1545 880Q 1540 880 1540 885L 1540 895Q 1540 900 1545 900L 1560 900" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1640 900L 1655 900Q 1660 900 1660 905L 1660 915Q 1660 920 1655 920L 1625 920Q 1620 920 1620 925L 1620 935Q 1620 940 1625 940L 1640 940" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1440 700L 1455 700Q 1460 700 1460 705L 1460 1015Q 1460 1020 1465 1020L 1680 1020" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1680 940L 1695 940Q 1700 940 1700 945L 1700 975Q 1700 980 1695 980L 1665 980Q 1660 980 1660 985L 1660 1015Q 1660 1020 1665 1020L 1680 1020" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1840 1020L 1855 1020Q 1860 1020 1860 1025L 1860 1035Q 1860 1040 1855 1040L 1825 1040Q 1820 1040 1820 1045L 1820 1055Q 1820 1060 1825 1060L 1840 1060" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1840 1020L 1855 1020Q 1860 1020 1860 1025L 1860 1055Q 1860 1060 1855 1060L 1825 1060Q 1820 1060 1820 1065L 1820 1095Q 1820 1100 1825 1100L 1840 1100" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1920 1060L 1935 1060Q 1940 1060 1940 1065L 1940 1095Q 1940 1100 1935 1100L 1905 1100Q 1900 1100 1900 1105L 1900 1135Q 1900 1140 1905 1140L 1920 1140" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1920 1100L 1935 1100Q 1940 1100 1940 1105L 1940 1115Q 1940 1120 1935 1120L 1905 1120Q 1900 1120 1900 1125L 1900 1135Q 1900 1140 1905 1140L 1920 1140" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 1960 1140L 1975 1140Q 1980 1140 1980 1145L 1980 1175Q 1980 1180 1975 1180L 1945 1180Q 1940 1180 1940 1185L 1940 1215Q 1940 1220 1945 1220L 1960 1220" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 2000 1220L 2015 1220Q 2020 1220 2020 1225L 2020 1295Q 2020 1300 2025 1300L 2080 1300" class="dependency-arrow" marker-end="url(#arrowhead)"></path><path d="M 2160 1300L 2175 1300Q 2180 1300 2180 1305L 2180 1335Q 2180 1340 2175 1340L 2145 1340Q 2140 1340 2140 1345L 2140 1375Q 2140 1380 2145 1380L 2160 1380" class="dependency-arrow" marker-end="url(#arrowhead)"></path></svg></div></div></div></div><!----><!----><!----><!----></div></div>
+    </div>
+
+    <!-- Edit Project Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Project Details</h2>
+                <button type="button" class="close-modal" id="close-modal-x">×</button>
+            </div>
+
+            <div class="modal-body">
+                <form method="POST" action="https://ganttchart.ai/edit" id="description-form">
+                    <input type="hidden" name="is-public" value="off">
+                    <input type="hidden" name="milestone-mode" value="auto-detect">
+
+                    <div class="form-group">
+                        <label for="project-name">Project Title</label>
+                        <input type="text" id="project-name" name="project-name" class="form-control form-input" value="system analysis" required="">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-group-half">
+                            <label for="start-date">Start Date</label>
+                            <input type="date" id="start-date" name="start-date" class="form-control" value="2026-04-24" required="">
+                        </div>
+                        <div class="form-group form-group-half">
+                            <label for="end-date">End Date</label>
+                            <input type="date" id="end-date" name="end-date" class="form-control" value="2028-04-23" required="">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-description">Project Description</label>
+                        <textarea id="project-description" name="project-description" class="form-control" rows="6" required="">Create a professional Gantt chart for a project titled:
+"Agent QA &amp; Performance Tracking System"
+
+Include the following phases:
+- Requirements gathering (QA metrics, KPIs)
+- System analysis
+- KPI definition
+- UI/UX design (dashboard)
+- Frontend development (HTML, CSS, JS)
+- Data handling (Google Sheets)
+- Testing and validation
+- Deployment
+- Final documentation
+
+Duration: 4 weeks
+
+Include:
+- Task dependencies
+- Timeline
+- Assigned person (Laith Abdul Salam Arabiyat)
+
+Make it clean, academic, and realistic.</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="teams">Available Teams (Optional)</label>
+                        <textarea class="form-control" name="available-teams" id="teams" placeholder="List your available teams (e.g., Designer, Developer, QA)" maxlength="512"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="regenerate-gantt" form="description-form">
+                        <span class="btn-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                <path d="M3 3v5h5"></path>
+                                <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+                                <path d="M16 16h5v5"></path>
+                            </svg></span>
+                        Regenerate Gantt Chart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data attributes for resetting/context -->
+    <div id="gantt-chart-data" data-original-description="" create="" a="" professional="" gantt="" chart="" for="" project="" titled:\r\n\"agent="" qa="" \u0026="" performance="" tracking="" system\"\r\n\r\ninclude="" the="" following="" phases:\r\n-="" requirements="" gathering="" (qa="" metrics,="" kpis)\r\n-="" system="" analysis\r\n-="" kpi="" definition\r\n-="" ui="" ux="" design="" (dashboard)\r\n-="" frontend="" development="" (html,="" css,="" js)\r\n-="" data="" handling="" (google="" sheets)\r\n-="" testing="" and="" validation\r\n-="" deployment\r\n-="" final="" documentation\r\n\r\nduration:="" 4="" weeks\r\n\r\ninclude:\r\n-="" task="" dependencies\r\n-="" timeline\r\n-="" assigned="" person="" (laith="" abdul="" salam="" arabiyat)\r\n\r\nmake="" it="" clean,="" academic,="" realistic.""="" data-original-name="" analysis""="" data-original-teams="" ""="" data-original-start-date="2026-04-24" data-original-end-date="2028-04-23">
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const resultId = "26337";
+
+        // Initialize Vue Gantt Editor
+        try {
+            // Fetch initial data
+            const response = await fetch(`/api/gantt_data/${resultId}`);
+            const data = await response.json();
+
+            if (!data.tasks) {
+                console.error('No tasks found');
+                return;
+            }
+
+            // Handle Export Buttons
+            const btnExcel = document.getElementById('btn-export-excel');
+            const btnViewSheets = document.getElementById('btn-view-sheets');
+            const btnExportSheets = document.getElementById('btn-export-sheets');
+
+            if (data.excel_download_url && btnExcel) {
+                btnExcel.href = data.excel_download_url;
+                btnExcel.style.display = 'inline-flex';
+            }
+
+            if (data.spreadsheet_url) {
+                if (btnViewSheets) {
+                    btnViewSheets.href = data.spreadsheet_url;
+                    btnViewSheets.style.display = 'inline-flex';
+                }
+                if (btnExportSheets) {
+                    btnExportSheets.style.display = 'inline-flex';
+                    const btnText = btnExportSheets.querySelector('.btn-text');
+                    if (btnText) btnText.textContent = 'Update Google Sheet';
+                }
+            } else {
+                if (btnExportSheets) {
+                    btnExportSheets.style.display = 'inline-flex';
+                }
+            }
+
+            // Initialize Gantt Editor
+            const isReadOnly = false;
+    window.ganttEditor = new GanttEditor.Gantt('#gantt-app-container', {
+        projectTitle: data.project_name,
+        resultId: resultId,
+        saveEndpoint: `/api/save-gantt/${resultId}`,
+        autoSave: !isReadOnly,
+        initialEditable: !isReadOnly,
+        readOnly: isReadOnly,
+        initialTasks: data.tasks,
+        initialTeamMembers: data.team_members || []
+    });
+
+    // Initialize Google Sheets Export
+    initializeGoogleSheetsExport(resultId);
+
+        } catch (error) {
+        console.error('Failed to initialize Gantt Editor:', error);
+        document.querySelector('.loading-state').textContent = 'Error loading Gantt chart. Please refresh.';
+    }
+
+    // Initialize Edit Modal Logic
+    initializeDescriptionEditor();
+    });
+
+    // Google Sheets Export functionality
+    function initializeGoogleSheetsExport(resultId) {
+        const exportBtn = document.getElementById('btn-export-sheets');
+        if (!exportBtn) return;
+
+        exportBtn.addEventListener('click', async () => {
+            // Prevent double-clicks
+            if (exportBtn.classList.contains('loading')) return;
+
+            // Check if ganttEditor is available
+            if (!window.ganttEditor || typeof window.ganttEditor.getXLSX !== 'function') {
+                alert('Gantt Editor not ready. Please wait a moment and try again.');
+                return;
+            }
+
+            // Set loading state
+            exportBtn.classList.add('loading');
+            const btnText = exportBtn.querySelector('.btn-text');
+            const originalText = btnText.textContent;
+            btnText.textContent = 'Exporting...';
+
+            try {
+                // Get XLSX data from the Gantt Editor
+                const xlsxData = window.ganttEditor.getXLSX();
+                if (!xlsxData) {
+                    throw new Error('Failed to generate XLSX data');
+                }
+
+                // Create a Blob from the XLSX data
+                const blob = new Blob([xlsxData], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                });
+
+                // Create FormData and append the file
+                const formData = new FormData();
+                formData.append('file', blob, 'gantt-chart.xlsx');
+
+                // Upload to the API
+                const response = await fetch(`/api/export_to_sheets/${resultId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to export to Google Sheets');
+                }
+
+                // Track export
+                if (typeof window.op === 'function') {
+                    window.op('track', 'gantt_exported_to_sheets', {
+                        result_id: resultId
+                    });
+                }
+
+                // Success - open the Google Sheet in a new tab
+                if (data.spreadsheet_url) {
+                    btnText.textContent = 'Exported!';
+                    exportBtn.classList.remove('loading');
+                    exportBtn.classList.add('success');
+
+                    // Update and show the "View in Google Sheets" button
+                    const btnViewSheets = document.getElementById('btn-view-sheets');
+                    if (btnViewSheets) {
+                        btnViewSheets.href = data.spreadsheet_url;
+                        btnViewSheets.style.display = 'inline-flex';
+                    }
+
+                    // Update button text
+                    if (data.is_update) {
+                        btnText.textContent = 'Updated!';
+                    } else {
+                        btnText.textContent = 'Exported!';
+                    }
+
+                    // Reset button after delay
+                    setTimeout(() => {
+                        exportBtn.classList.remove('success');
+                        btnText.textContent = 'Update Google Sheet';
+                        // Ensure export button stays visible for future updates
+                        exportBtn.style.display = 'inline-flex';
+                    }, 2000);
+
+                    // Open the spreadsheet if it's new
+                    if (!data.is_update) {
+                        window.open(data.spreadsheet_url, '_blank');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error exporting to Google Sheets:', error);
+                alert('Failed to export to Google Sheets: ' + error.message);
+
+                // Reset button
+                exportBtn.classList.remove('loading');
+                btnText.textContent = originalText;
+            }
+        });
+    }
+
+
+
+    // Description Editor functionality (Modal)
+    function initializeDescriptionEditor() {
+        const modal = document.getElementById('edit-modal');
+        const openBtn = document.getElementById('open-edit-modal');
+        const closeBtn = document.getElementById('close-modal-x');
+        const cancelBtn = document.getElementById('cancel-edit');
+        const textarea = document.getElementById('project-description');
+
+        if (!openBtn) return; // Guard clause if button not found
+
+        // Open Modal
+        openBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        });
+
+        // Close Modal Helper
+        const closeModal = () => {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            resetForm();
+        };
+
+        // Close events
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+
+        // Close on clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        // Reset Form Logic
+        function resetForm() {
+            const ganttData = document.getElementById('gantt-chart-data');
+            // Revert values
+            textarea.value = JSON.parse(ganttData.dataset.originalDescription);
+            document.getElementById('project-name').value = JSON.parse(ganttData.dataset.originalName);
+            document.getElementById('teams').value = JSON.parse(ganttData.dataset.originalTeams);
+            document.getElementById('start-date').value = ganttData.dataset.originalStartDate;
+            document.getElementById('end-date').value = ganttData.dataset.originalEndDate;
+        }
+
+        // Form submission validation
+        document.getElementById('description-form').addEventListener('submit', function (e) {
+            const projectName = document.getElementById('project-name').value.trim();
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            const description = textarea.value.trim();
+
+            if (!projectName || !startDate || !endDate || !description) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (new Date(startDate) > new Date(endDate)) {
+                e.preventDefault();
+                alert('Start date must be before end date.');
+                return;
+            }
+
+            e.preventDefault();
+
+            const availableTeams = document.querySelector('[name="available-teams"]').value;
+            const isPublic = document.querySelector('input[name="is-public"]').value;
+
+            // Get base URL for regeneration (assuming it goes to the same place as standalone which is /gantt with params)
+            // But wait, user is in EDITOR. Regenerating usually means creating a NEW chart.
+            // The standalone version redirected to /gantt?params...
+            // We should replicate that behavior to "Regenerate".
+
+            const params = new URLSearchParams({
+                project_title: projectName,
+                description: description,
+                teams: availableTeams,
+                start_date: startDate,
+                end_date: endDate, // We added support for this in app.py
+                is_public: isPublic === 'on' ? 'True' : 'False',
+            });
+
+            // Track regeneration action
+            if (typeof window.op === 'function') {
+                window.op('track', 'gantt_regeneration_requested', {
+                    result_id: "26337",
+                    project_name_length: projectName.length
+                });
+            }
+
+            // Redirect to the generation page (gantt route) with these params
+            window.location.href = `/gantt?${params.toString()}`;
+        });
+    }
+
+    // OpenPanel tracking for Gantt Editor interactions
+    (function () {
+        const resultId = "26337";
+
+        // Track page view
+        if (typeof window.op === 'function') {
+            window.op('track', 'gantt_editor_page_viewed', {
+                result_id: resultId
+            });
+        }
+
+        // Track edit modal open
+        const openEditBtn = document.getElementById('open-edit-modal');
+        if (openEditBtn) {
+            openEditBtn.addEventListener('click', function () {
+                if (typeof window.op === 'function') {
+                    window.op('track', 'gantt_edit_modal_opened', {
+                        result_id: resultId
+                    });
+                }
+            });
+        }
+
+        // Attach tracking listeners to Gantt Editor elements after they render
+        function attachGanttEditorTracking() {
+            if (typeof window.op !== 'function') return;
+
+            const container = document.getElementById('gantt-app-container');
+            if (!container) return;
+
+            // Helper to track click events
+            const trackClick = (eventName) => () => {
+                window.op('track', eventName, { result_id: resultId });
+            };
+
+            // New Task button (primary button in toolbar)
+            const newTaskBtn = container.querySelector('.gantt-btn-primary');
+            if (newTaskBtn) {
+                newTaskBtn.addEventListener('click', trackClick('gantt_new_task_clicked'));
+            }
+
+            // Filter dropdowns - find by class within filter groups
+            const filterGroups = container.querySelectorAll('.filter-with-manage');
+            filterGroups.forEach(group => {
+                const workstreamFilter = group.querySelector('.filter-workstream');
+                const assigneeFilter = group.querySelector('.filter-assignee');
+                const manageBtn = group.querySelector('.gantt-manage-btn');
+
+                if (workstreamFilter) {
+                    workstreamFilter.addEventListener('click', trackClick('gantt_workstream_filter_clicked'));
+                    if (manageBtn) {
+                        manageBtn.addEventListener('click', trackClick('gantt_manage_workstreams_clicked'));
+                    }
+                }
+
+                if (assigneeFilter) {
+                    assigneeFilter.addEventListener('click', trackClick('gantt_assignee_filter_clicked'));
+                    if (manageBtn) {
+                        manageBtn.addEventListener('click', trackClick('gantt_manage_assignees_clicked'));
+                    }
+                }
+            });
+
+            // Locale selector
+            const localeSelector = container.querySelector('.locale-selector-trigger') ||
+                container.querySelector('.locale-selector');
+            if (localeSelector) {
+                localeSelector.addEventListener('click', trackClick('gantt_locale_filter_clicked'));
+            }
+        }
+
+        // Wait for Vue to render the Gantt Editor, then attach listeners
+        setTimeout(attachGanttEditorTracking, 1000);
+    })();
+</script>
+</main>
+
+  
+
+  <!-- Analytics -->
+  <script async="" src="./Interactive Gantt Chart - system analysis_files/js"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-HTL7VSZXTH');
+  </script>
+  <script src="./Interactive Gantt Chart - system analysis_files/moment-with-locales.min.js.download" integrity="sha512-42PE0rd+wZ2hNXftlM78BSehIGzezNeQuzihiBCvUEB3CVxHvsShF86wBWwQORNxNINlBPuq7rG4WWhNiTVHFg==" crossorigin="anonymous"></script>
+
+<script>
+moment.locale("en");
+function flask_moment_render(elem) {{
+    const timestamp = moment(elem.dataset.timestamp);
+    const func = elem.dataset.function;
+    const format = elem.dataset.format;
+    const timestamp2 = elem.dataset.timestamp2;
+    const no_suffix = elem.dataset.nosuffix;
+    const units = elem.dataset.units;
+    let args = [];
+    if (format)
+        args.push(format);
+    if (timestamp2)
+        args.push(moment(timestamp2));
+    if (no_suffix)
+        args.push(no_suffix);
+    if (units)
+        args.push(units);
+    elem.textContent = timestamp[func].apply(timestamp, args);
+    elem.classList.remove('flask-moment');
+    elem.style.display = "";
+}}
+function flask_moment_render_all() {{
+    const moments = document.querySelectorAll('.flask-moment');
+    moments.forEach(function(moment) {{
+        flask_moment_render(moment);
+        const refresh = moment.dataset.refresh;
+        if (refresh && refresh > 0) {{
+            (function(elem, interval) {{
+                setInterval(function() {{
+                    flask_moment_render(elem);
+                }}, interval);
+            }})(moment, refresh);
+        }}
+    }})
+}}
+document.addEventListener("DOMContentLoaded", flask_moment_render_all);
+</script>
+
+  <script src="./Interactive Gantt Chart - system analysis_files/jquery-3.7.1.min.js.download"></script>
+  
+  <script src="./Interactive Gantt Chart - system analysis_files/modern.js.download"></script>
+
+  <div class="cookie-popup">
+    <div class="cookie-content">
+      <div class="cookie-text">
+        We use cookies to enhance your experience and analyze our site usage. By clicking "Accept", you consent to our
+        use of cookies. See our <a href="https://ganttchart.ai/privacy_policy">Privacy Policy</a> for more information.
+      </div>
+      <div class="cookie-buttons">
+        <button class="cookie-btn cookie-deny">Deny</button>
+        <button class="cookie-btn cookie-accept">Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cookie consent management
+    document.addEventListener('DOMContentLoaded', function () {
+      const cookiePopup = document.querySelector('.cookie-popup');
+      const cookieConsent = localStorage.getItem('cookieConsent');
+
+      if (!cookieConsent) {
+        cookiePopup.classList.add('show');
+        // Disable all tracking by default until user consents
+        if (typeof gtag === 'function') {
+          gtag('consent', 'update', {
+            'analytics_storage': 'denied'
+          });
+        }
+        // Disable Sentry if loaded
+        if (typeof Sentry !== 'undefined') {
+          Sentry.init({ enabled: false });
+        }
+      }
+
+      document.querySelector('.cookie-accept').addEventListener('click', function () {
+        localStorage.setItem('cookieConsent', 'accepted');
+        cookiePopup.classList.remove('show');
+
+        // Enable various tracking services
+        if (typeof gtag === 'function') {
+          gtag('consent', 'update', {
+            'analytics_storage': 'granted'
+          });
+        }
+
+        // Enable OpenPanel
+        if (typeof op === 'function') {
+          window.op('init', {
+            apiUrl: 'https://openpanel.ganttchart.ai/api',
+            clientId: '89de9814-8b51-45c3-9591-45cdc2b885d6',
+            secretKey: 'sec_cc83fae016d36e1b87d3',
+            trackScreenViews: true,
+            trackOutgoingLinks: true,
+            trackAttributes: true,
+          });
+        }
+
+        // Enable Sentry if loaded
+        if (typeof Sentry !== 'undefined') {
+          Sentry.init({
+            dsn: "https://1a219b9776749ae39cc12364c35a4ab0@o4508652618383360.ingest.us.sentry.io/4508652620283904",
+            integrations: [
+              Sentry.replayIntegration({
+                maskAllText: false,
+                blockAllMedia: false,
+              }),
+            ],
+            replaysSessionSampleRate: 0.5,
+            replaysOnErrorSampleRate: 1.0,
+          });
+        }
+      });
+
+      document.querySelector('.cookie-deny').addEventListener('click', function () {
+        localStorage.setItem('cookieConsent', 'denied');
+        cookiePopup.classList.remove('show');
+
+        // Disable all tracking services
+        if (typeof gtag === 'function') {
+          gtag('consent', 'update', {
+            'analytics_storage': 'denied'
+          });
+        }
+
+        // Disable OpenPanel
+        window.op = function () { }; // No-op function
+
+        // Disable Sentry if loaded
+        if (typeof Sentry !== 'undefined') {
+          Sentry.init({ enabled: false });
+        }
+
+        // Clear any existing cookies
+        document.cookie.split(";").forEach(function (c) {
+          document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+        });
+      });
+    });
+  </script>
+
+
+<veepn-lock-screen><template shadowrootmode="open"><style>html{box-sizing:border-box;text-size-adjust:100%;word-break:normal;tab-size:4}*,:before,:after{background-repeat:no-repeat;box-sizing:border-box}:before,:after{text-decoration:inherit;vertical-align:inherit}*{padding:0;margin:0}hr{overflow:visible;height:0;color:inherit;border:0;border-top:1px solid}details,main{display:block}summary{display:list-item}small{font-size:80%}[hidden]{display:none!important}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}a{background-color:transparent}a:active,a:hover{outline-width:0}code,kbd,pre,samp{font-family:monospace}pre{font-size:1em}b,strong{font-weight:bolder}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{border-color:inherit;text-indent:0}iframe{border-style:none}input{border-radius:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-decoration{appearance:none}textarea{overflow:auto;resize:vertical}button,input,optgroup,select,textarea{font:inherit;color:inherit}optgroup{font-weight:700}button{overflow:visible}button,select{text-transform:none}button,[type=button],[type=reset],[type=submit],[role=button]{cursor:pointer}button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}button,html [type=button],[type=reset],[type=submit]{appearance:auto}button,input,select,textarea{background-color:transparent;border-style:none}button:-moz-focusring,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{outline:1px dotted ButtonText}select{appearance:none}a:focus,button:focus,input:focus,select:focus,textarea:focus{outline-width:0}select::-ms-expand{display:none}select::-ms-value{color:currentcolor}legend{border:0;color:inherit;display:table;white-space:normal;max-width:100%}::-webkit-file-upload-button{appearance:auto;color:inherit;font:inherit}[disabled]{cursor:default}img{border-style:none}progress{vertical-align:baseline}[aria-busy=true]{cursor:progress}[aria-controls]{cursor:pointer}[aria-disabled=true]{cursor:default}ul,ol{list-style-type:none}figure{margin:0}@keyframes slide-in{0%{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}.gradient-blue{background:radial-gradient(106.41% 128.47% at 50.15% 128.47%,#23abff,#3066ff)}.gradient-green{background:radial-gradient(92.26% 118.88% at 50.15% .13%,#00c3c3,#00aab3)}.gradient-purple{background:radial-gradient(165.12% 115.56% at 50.15% .13%,#a15aff,#00a0eb)}.bg-blue{background-color:#f2f5ff}.bg-purple{background-color:#f7f0ff}.bg-green{background-color:#ebffed}.lock-screen{font-family:FigtreeVF,sans-serif;letter-spacing:normal;position:fixed;z-index:2147483638;right:24px;bottom:24px;width:327px;border-radius:24px;overflow:hidden;box-shadow:0 24px 32px #00000014;animation:slide-in .3s ease-in-out forwards}.lock-screen__content{position:relative;padding:24px 24px 64px}.lock-screen__close{position:absolute;top:16px;right:16px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;opacity:.5}.lock-screen__label{height:26px;width:fit-content;border-radius:50px;background-color:#fff3;padding-inline:16px;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;font-size:12px;line-height:18px;margin:-8px auto 16px}.lock-screen__title{color:#fff;text-align:center;font-size:20px;line-height:28px;font-weight:600;margin-bottom:8px}.lock-screen__description{color:#f5f6f7;text-align:center;font-size:14px;line-height:20px}.lock-screen__description b{font-weight:600}.lock-screen__card{position:relative;z-index:1;margin-top:-44px;background-color:#fff;border-radius:24px;padding:32px 20px 20px}.lock-screen__inner{margin-bottom:24px}.lock-screen__submit{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:16px;height:40px;width:100%;border-radius:12px;padding-inline:16px;background-color:#f70;color:#fff;margin-bottom:16px}.lock-screen__skip{display:flex;align-items:center;justify-content:center;font-size:14px;line-height:20px;color:#82829c;margin-inline:auto}.price-card{border:1px solid #f2f2fc;background:linear-gradient(254.14deg,#fafbff .04%,#f5f8ff 100.04%);border-radius:24px;padding:24px 28px}.price-card__label{color:#4a5764;text-align:center;font-size:14px;line-height:20px;text-transform:uppercase;margin-bottom:16px}.price-card__price{display:flex;justify-content:center;align-items:flex-start;column-gap:2px;margin-bottom:12px}.price-card__currency{color:#515478;font-size:18px;line-height:28px}.price-card__number{color:#14142a;text-align:center;font-size:64px;line-height:54px}.price-card__wrap{display:flex;flex-direction:column}.price-card__decimal{color:#515478;font-size:18px;line-height:28px;font-weight:600}.price-card__period{color:#515478;font-size:14px;line-height:20px;margin-top:-6px}.price-card__discount{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:12px}.price-card__discount-divider{position:absolute;z-index:0;top:50%;left:0;width:100%;height:1px;background-color:#dbe2f9;transform:translateY(-50%)}.price-card__discount-icon{position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-50%)}.price-card__discount-text{position:relative;z-index:2;color:#fff;font-size:12px;font-weight:600;line-height:18px}.price-card__features{display:flex;align-items:center;justify-content:center;column-gap:16px}.price-card__feature{color:#222e3a;font-size:14px;line-height:20px;display:flex;align-items:center;gap:6px}.price-card__feature:before{content:"";display:block;width:4px;height:4px;background-color:#20df9e;border-radius:50%;flex-shrink:0}.features-list{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.features-list__item{display:flex;flex-direction:column;align-items:center;gap:6px}.features-list__icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center}.features-list__text{color:#293a53;text-align:center;font-size:16px;line-height:24px;letter-spacing:-.1px}</style></template><style>@font-face{font-family:FigtreeVF;src:url(chrome-extension://majdfhpaihoncoakbjgbdhglocklcgno/fonts/FigtreeVF.woff2) format("woff2 supports variations"),url(chrome-extension://majdfhpaihoncoakbjgbdhglocklcgno/fonts/FigtreeVF.woff2) format("woff2-variations");font-weight:100 1000;font-display:swap}</style></veepn-lock-screen><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></body></html>
