@@ -2,681 +2,480 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>System Analysis — Project Gantt</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>System Analysis — Gantt</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    --bg: #0a0c10;
-    --surface: #111318;
-    --surface2: #181c24;
-    --border: #232738;
-    --text: #e8ecf5;
-    --muted: #6b7394;
-    --accent: #5b8dee;
-    --accent2: #9d6cff;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
-    --c-planning:    #14b8a6;
-    --c-sysanalysis: #84cc16;
-    --c-design:      #22c55e;
-    --c-frontend:    #10b981;
-    --c-backend:     #0ea5e9;
-    --c-qa:          #3b82f6;
-    --c-devops:      #6366f1;
-    --c-docs:        #ec4899;
-    --c-training:    #f59e0b;
+:root {
+  --bg:       #0a0c10;
+  --surface:  #111318;
+  --surface2: #181c24;
+  --border:   #232738;
+  --text:     #e8ecf5;
+  --muted:    #6b7394;
+  --accent:   #5b8dee;
+  --row-h:    48px;
+  --label-w:  130px;
+  --header-h: 52px;
+  --day-w:    28px;
+  --safe-btm: env(safe-area-inset-bottom, 0px);
+}
 
-    --row-h: 42px;
-    --label-w: 260px;
-    --header-h: 56px;
-  }
+html, body { height: 100%; overflow: hidden; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* ── TOP BAR ── */
+.topbar {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #0d1117 0%, #111827 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px 12px;
+  position: relative;
+  overflow: hidden;
+}
+.topbar::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 120% at 0% 50%, rgba(91,141,238,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.topbar-row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  position: relative;
+}
+.project-badge {
+  font-family: 'Syne', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(91,141,238,.12);
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(91,141,238,.25);
+}
+h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, #e8ecf5 30%, #5b8dee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
+  margin-bottom: 10px;
+}
+.stats-strip { display: flex; gap: 8px; position: relative; }
+.stat-chip {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 8px;
+  display: flex; flex-direction: column; gap: 2px; min-width: 0;
+}
+.stat-chip .lbl { font-size: 8px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.stat-chip .val { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; }
 
-  /* ── HEADER ── */
-  .page-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    padding: 36px 48px 24px;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(135deg, #0d1117 0%, #111827 100%);
-    position: relative;
-    overflow: hidden;
-  }
-  .page-header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 60% 80% at 10% 50%, rgba(91,141,238,.08) 0%, transparent 70%),
-                radial-gradient(ellipse 40% 60% at 90% 20%, rgba(157,108,255,.06) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-left { position: relative; }
-  .project-label {
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(28px, 4vw, 46px);
-    font-weight: 800;
-    line-height: 1;
-    background: linear-gradient(135deg, #e8ecf5 30%, #5b8dee 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .header-meta {
-    display: flex;
-    gap: 24px;
-    position: relative;
-  }
-  .meta-item {
-    text-align: right;
-  }
-  .meta-item .label { color: var(--muted); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 4px; }
-  .meta-item .value { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); }
+/* ── FILTER ── */
+.filter-bar {
+  flex-shrink: 0;
+  display: flex; gap: 6px;
+  padding: 8px 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.filter-bar::-webkit-scrollbar { display: none; }
+.filter-tab {
+  flex-shrink: 0;
+  font-size: 10px; padding: 5px 10px; border-radius: 20px;
+  border: 1px solid var(--border); color: var(--muted);
+  cursor: pointer; white-space: nowrap;
+  transition: all .15s;
+  background: transparent;
+  font-family: 'DM Mono', monospace;
+  display: flex; align-items: center; gap: 5px;
+}
+.filter-tab .dot { width: 6px; height: 6px; border-radius: 2px; flex-shrink: 0; }
 
-  /* ── LEGEND ── */
-  .legend-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 20px;
-    padding: 16px 48px;
-    border-bottom: 1px solid var(--border);
-    background: var(--surface);
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 11px;
-    color: var(--muted);
-    cursor: default;
-  }
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
+/* ── CHART ── */
+.chart-wrap { flex: 1; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+.chart-scroll { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; position: relative; }
+.chart-scroll::-webkit-scrollbar { display: none; }
+.chart-inner { display: flex; position: relative; }
 
-  /* ── CHART WRAPPER ── */
-  .chart-outer {
-    padding: 24px 48px 48px;
-  }
-  .chart-container {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--surface);
-  }
+/* label col */
+.label-col {
+  flex-shrink: 0; width: var(--label-w);
+  border-right: 1px solid var(--border);
+  position: sticky; left: 0; z-index: 20;
+  background: var(--surface);
+}
+.label-header {
+  height: var(--header-h); display: flex; align-items: center;
+  padding: 0 10px; border-bottom: 1px solid var(--border);
+  font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+  position: sticky; top: 0; z-index: 21; background: var(--surface);
+}
+.label-row {
+  height: var(--row-h); display: flex; align-items: center;
+  padding: 0 10px; border-bottom: 1px solid var(--border);
+  gap: 6px; transition: background .12s;
+}
+.label-row.hidden { display: none; }
+.task-id { font-size: 9px; font-weight: 600; color: var(--accent); min-width: 22px; flex-shrink: 0; }
+.task-name-wrap { min-width: 0; flex: 1; }
+.task-name { font-size: 10px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.task-ws  { font-size: 8px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; margin-top: 1px; }
 
-  /* ── INNER SCROLL ── */
-  .chart-inner {
-    display: flex;
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  .chart-inner::-webkit-scrollbar { height: 6px; }
-  .chart-inner::-webkit-scrollbar-track { background: var(--surface2); }
-  .chart-inner::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* grid col */
+.grid-col { flex: 1; position: relative; min-width: 0; }
+.dates-header {
+  height: var(--header-h); border-bottom: 1px solid var(--border);
+  display: flex; align-items: stretch;
+  position: sticky; top: 0; z-index: 10; background: var(--surface);
+}
+.week-group { display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+.week-label { padding: 5px 6px 3px; font-size: 8px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.day-labels { display: flex; flex: 1; }
+.day-label {
+  width: var(--day-w); min-width: var(--day-w); flex: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--muted);
+  border-right: 1px solid rgba(255,255,255,.03);
+}
+.day-label.today   { color: var(--accent); font-weight: 700; background: rgba(91,141,238,.1); }
+.day-label.weekend { color: #2e3348; }
 
-  /* ── LABEL COL ── */
-  .label-col {
-    flex-shrink: 0;
-    width: var(--label-w);
-    border-right: 1px solid var(--border);
-    position: sticky;
-    left: 0;
-    z-index: 10;
-    background: var(--surface);
-  }
-  .label-header {
-    height: var(--header-h);
-    display: flex;
-    align-items: center;
-    padding: 0 18px;
-    border-bottom: 1px solid var(--border);
-    font-family: 'Syne', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .label-row {
-    height: var(--row-h);
-    display: flex;
-    align-items: center;
-    padding: 0 18px;
-    border-bottom: 1px solid var(--border);
-    gap: 10px;
-    transition: background .15s;
-  }
-  .label-row:hover { background: var(--surface2); }
-  .task-id {
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--muted);
-    min-width: 28px;
-  }
-  .task-name {
-    font-size: 12px;
-    color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .ws-pill {
-    margin-left: auto;
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    white-space: nowrap;
-    font-weight: 500;
-    flex-shrink: 0;
-  }
+.grid-rows { position: relative; }
+.grid-row {
+  height: var(--row-h); border-bottom: 1px solid var(--border);
+  display: flex; position: relative;
+}
+.grid-row.hidden { display: none; }
+.grid-cell { width: var(--day-w); min-width: var(--day-w); flex: none; border-right: 1px solid rgba(255,255,255,.03); }
+.grid-cell.weekend   { background: rgba(0,0,0,.15); }
+.grid-cell.today-col { background: rgba(91,141,238,.06); }
 
-  /* ── GRID COL ── */
-  .grid-col {
-    flex: 1;
-    min-width: 0;
-    position: relative;
-  }
-  .dates-header {
-    height: var(--header-h);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: stretch;
-    position: relative;
-  }
-  .week-group {
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid var(--border);
-  }
-  .week-label {
-    padding: 6px 8px 4px;
-    font-size: 9px;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .day-labels {
-    display: flex;
-    flex: 1;
-  }
-  .day-label {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    color: var(--muted);
-    border-right: 1px solid rgba(255,255,255,.04);
-    white-space: nowrap;
-    min-width: 28px;
-  }
-  .day-label.today {
-    color: var(--accent);
-    font-weight: 700;
-    background: rgba(91,141,238,.08);
-  }
-  .day-label.weekend { color: #3a3f54; }
+.today-line { position: absolute; top: 0; bottom: 0; width: 1.5px; background: var(--accent); z-index: 5; pointer-events: none; }
+.today-pip  { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 
-  /* rows */
-  .grid-rows {
-    position: relative;
-  }
-  .grid-row {
-    height: var(--row-h);
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    display: flex;
-  }
-  .grid-row:hover { background: rgba(255,255,255,.015); }
-  .grid-cell {
-    border-right: 1px solid rgba(255,255,255,.04);
-    flex: 1;
-    min-width: 28px;
-  }
-  .grid-cell.weekend { background: rgba(0,0,0,.12); }
-  .grid-cell.today-col { background: rgba(91,141,238,.05); }
+/* task bars */
+.task-bar-wrap { position: absolute; top: 50%; transform: translateY(-50%); height: 26px; z-index: 3; cursor: pointer; }
+.task-bar {
+  height: 100%; border-radius: 5px;
+  display: flex; align-items: center; padding: 0 7px;
+  font-size: 9px; font-weight: 500; color: rgba(255,255,255,.9);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  position: relative; box-shadow: 0 2px 6px rgba(0,0,0,.4);
+  transition: filter .12s;
+  animation: barIn .35s ease both;
+}
+.task-bar::after { content:''; position:absolute; inset:0; border-radius:5px; background:linear-gradient(180deg,rgba(255,255,255,.18) 0%,transparent 60%); pointer-events:none; }
+.task-bar-wrap:active .task-bar { filter: brightness(1.3); }
+@keyframes barIn { from{opacity:0;transform:scaleX(.6)} to{opacity:1;transform:scaleX(1)} }
 
-  /* today line */
-  .today-line {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 2px;
-    background: var(--accent);
-    z-index: 5;
-    pointer-events: none;
-  }
-  .today-line::before {
-    content: 'TODAY';
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    font-size: 8px;
-    letter-spacing: .1em;
-    color: var(--accent);
-    font-weight: 700;
-  }
+/* arrows */
+.dep-svg { position:absolute; inset:0; pointer-events:none; z-index:2; overflow:visible; }
+.dep-path { fill:none; stroke:rgba(107,115,148,.3); stroke-width:1; stroke-dasharray:3 3; }
 
-  /* task bars */
-  .task-bar-wrap {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 24px;
-    z-index: 3;
-    cursor: pointer;
-  }
-  .task-bar {
-    height: 100%;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    padding: 0 9px;
-    font-size: 10px;
-    font-weight: 500;
-    color: #fff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,.35);
-    transition: filter .15s, transform .15s;
-    animation: barIn .4s ease both;
-  }
-  .task-bar:hover { filter: brightness(1.2); transform: scaleY(1.08); }
-  .task-bar::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 5px;
-    background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 60%);
-    pointer-events: none;
-  }
+/* scroll hint */
+.scroll-hint { position:absolute; right:0; top:0; bottom:0; width:24px; background:linear-gradient(90deg,transparent,var(--bg)); pointer-events:none; z-index:30; }
 
-  @keyframes barIn {
-    from { opacity: 0; transform: scaleX(.7); }
-    to   { opacity: 1; transform: scaleX(1); }
-  }
-
-  /* dependency arrows */
-  .dep-svg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    z-index: 2;
-    overflow: visible;
-  }
-  .dep-path {
-    fill: none;
-    stroke: rgba(107,115,148,.5);
-    stroke-width: 1.2;
-    stroke-dasharray: 4 3;
-  }
-
-  /* ── TOOLTIP ── */
-  .tooltip {
-    position: fixed;
-    z-index: 999;
-    background: #1a1f2e;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .15s;
-    min-width: 220px;
-    box-shadow: 0 8px 32px rgba(0,0,0,.5);
-  }
-  .tooltip.visible { opacity: 1; }
-  .tooltip-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
-  .tooltip-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px; font-size: 11px; color: var(--muted); }
-  .tooltip-row span:last-child { color: var(--text); }
-  .tooltip-bar { height: 3px; border-radius: 2px; margin-top: 10px; }
-
-  /* ── STATS ── */
-  .stats-row {
-    display: flex;
-    gap: 16px;
-    padding: 20px 48px;
-    flex-wrap: wrap;
-  }
-  .stat-card {
-    flex: 1;
-    min-width: 140px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    position: relative;
-    overflow: hidden;
-  }
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-  }
-  .stat-label { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-  .stat-value { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; }
-  .stat-sub { font-size: 10px; color: var(--muted); margin-top: 2px; }
+/* ── BOTTOM SHEET ── */
+.sheet-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:100; opacity:0; pointer-events:none; transition:opacity .25s; backdrop-filter:blur(4px); }
+.sheet-overlay.open { opacity:1; pointer-events:all; }
+.bottom-sheet {
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--surface2); border-top:1px solid var(--border);
+  border-radius:20px 20px 0 0; z-index:101;
+  padding:0 0 calc(20px + var(--safe-btm));
+  transform:translateY(100%); transition:transform .3s cubic-bezier(.32,.72,0,1);
+  max-height:70vh; overflow-y:auto;
+}
+.bottom-sheet.open { transform:translateY(0); }
+.sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:12px auto 16px; }
+.sheet-content { padding:0 20px; }
+.sheet-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; margin-bottom:4px; color:var(--text); }
+.sheet-ws    { font-size:10px; color:var(--muted); margin-bottom:14px; }
+.sheet-color-bar { height:3px; border-radius:2px; margin-bottom:16px; }
+.sheet-row { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--border); }
+.sheet-row:last-child { border-bottom:none; }
+.sheet-row .lbl { font-size:10px; color:var(--muted); }
+.sheet-row .val { font-size:11px; color:var(--text); font-weight:500; text-align:right; max-width:60%; }
 </style>
 </head>
 <body>
 
-<header class="page-header">
-  <div class="header-left">
-    <div class="project-label">Project Dashboard · #26337</div>
-    <h1>System Analysis</h1>
+<div class="topbar">
+  <div class="topbar-row1">
+    <span class="project-badge">Project #26337</span>
   </div>
-  <div class="header-meta">
-    <div class="meta-item">
-      <div class="label">Start Date</div>
-      <div class="value" id="proj-start">—</div>
-    </div>
-    <div class="meta-item">
-      <div class="label">End Date</div>
-      <div class="value" id="proj-end">—</div>
-    </div>
-    <div class="meta-item">
-      <div class="label">Tasks</div>
-      <div class="value" id="proj-tasks">26</div>
-    </div>
-    <div class="meta-item">
-      <div class="label">Teams</div>
-      <div class="value" id="proj-teams">9</div>
-    </div>
-  </div>
-</header>
+  <h1>System Analysis</h1>
+  <div class="stats-strip" id="stats-strip"></div>
+</div>
 
-<div class="legend-bar" id="legend"></div>
+<div class="filter-bar" id="filter-bar">
+  <button class="filter-tab" data-ws="all" style="background:var(--surface2);color:var(--text);border-color:var(--border)">All</button>
+</div>
 
-<div class="stats-row" id="stats"></div>
-
-<div class="chart-outer">
-  <div class="chart-container">
-    <div class="chart-inner" id="chart-inner">
-      <!-- label col -->
+<div class="chart-wrap">
+  <div class="chart-scroll" id="chart-scroll">
+    <div class="chart-inner">
       <div class="label-col">
         <div class="label-header">Task</div>
         <div id="label-rows"></div>
       </div>
-      <!-- grid col -->
       <div class="grid-col" id="grid-col">
         <div class="dates-header" id="dates-header"></div>
         <div class="grid-rows" id="grid-rows"></div>
       </div>
     </div>
   </div>
+  <div class="scroll-hint"></div>
 </div>
 
-<div class="tooltip" id="tooltip"></div>
+<div class="sheet-overlay" id="overlay"></div>
+<div class="bottom-sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content" id="sheet-content"></div>
+</div>
 
 <script>
 const DATA = {"tasks":[{"assignees":["Project Team"],"depends":[],"end":"2026-04-27","id":"M1","name":"Document QA metrics requirements","progress":0,"start":"2026-04-24","workstream":"Planning"},{"assignees":["Project Team"],"depends":["M1"],"end":"2026-04-29","id":"M2","name":"Identify key performance indicators","progress":0,"start":"2026-04-28","workstream":"Planning"},{"assignees":["Project Team"],"depends":["M2"],"end":"2026-04-30","id":"M3","name":"Define tracking system scope","progress":0,"start":"2026-04-30","workstream":"Planning"},{"assignees":["Project Team"],"depends":["M3"],"end":"2026-05-04","id":"M4","name":"Gather stakeholder requirements sessions","progress":0,"start":"2026-05-01","workstream":"Planning"},{"assignees":["Project Team"],"depends":["M1"],"end":"2026-04-29","id":"M5","name":"Analyze competitor tracking solutions","progress":0,"start":"2026-04-28","workstream":"Planning"},{"assignees":["Project Team"],"depends":["M4","M5"],"end":"2026-05-06","id":"M6","name":"Create requirements specification document","progress":0,"start":"2026-05-05","workstream":"Planning"},{"assignees":["Engineering Team"],"depends":["M6"],"end":"2026-05-08","id":"M7","name":"Design system architecture overview","progress":0,"start":"2026-05-07","workstream":"System Analysis"},{"assignees":["Engineering Team"],"depends":["M7"],"end":"2026-05-12","id":"M8","name":"Define database schema structure","progress":0,"start":"2026-05-11","workstream":"System Analysis"},{"assignees":["Engineering Team"],"depends":["M8"],"end":"2026-05-13","id":"M9","name":"Plan data integration with Sheets","progress":0,"start":"2026-05-13","workstream":"System Analysis"},{"assignees":["Design Team"],"depends":["M6"],"end":"2026-05-08","id":"M10","name":"Design dashboard wireframes mockups","progress":0,"start":"2026-05-07","workstream":"Design"},{"assignees":["Design Team"],"depends":["M10"],"end":"2026-05-12","id":"M11","name":"Create UI component specifications","progress":0,"start":"2026-05-11","workstream":"Design"},{"assignees":["Frontend Team"],"depends":["M11"],"end":"2026-05-15","id":"M12","name":"Develop responsive dashboard HTML","progress":0,"start":"2026-05-13","workstream":"Frontend Development"},{"assignees":["Frontend Team"],"depends":["M12"],"end":"2026-05-19","id":"M13","name":"Build dashboard styling CSS","progress":0,"start":"2026-05-18","workstream":"Frontend Development"},{"assignees":["Frontend Team"],"depends":["M13"],"end":"2026-05-22","id":"M14","name":"Implement dashboard interactivity JavaScript","progress":0,"start":"2026-05-20","workstream":"Frontend Development"},{"assignees":["Backend Team"],"depends":["M9"],"end":"2026-05-18","id":"M15","name":"Develop Google Sheets integration API","progress":0,"start":"2026-05-14","workstream":"Backend Development"},{"assignees":["Backend Team"],"depends":["M15"],"end":"2026-05-20","id":"M16","name":"Create data synchronization mechanism","progress":0,"start":"2026-05-19","workstream":"Backend Development"},{"assignees":["Backend Team"],"depends":["M16"],"end":"2026-05-25","id":"M17","name":"Build KPI calculation engine","progress":0,"start":"2026-05-21","workstream":"Backend Development"},{"assignees":["Backend Team"],"depends":["M17"],"end":"2026-05-27","id":"M18","name":"Implement real-time data refresh","progress":0,"start":"2026-05-26","workstream":"Backend Development"},{"assignees":["Backend Team"],"depends":["M18"],"end":"2026-05-28","id":"M19","name":"Configure automated data validation rules","progress":0,"start":"2026-05-28","workstream":"Backend Development"},{"assignees":["QA Team"],"depends":["M14","M19"],"end":"2026-06-01","id":"M20","name":"Conduct system functionality testing","progress":0,"start":"2026-05-29","workstream":"Testing"},{"assignees":["QA Team"],"depends":["M20"],"end":"2026-06-03","id":"M21","name":"Perform usability testing sessions","progress":0,"start":"2026-06-02","workstream":"Testing"},{"assignees":["QA Team"],"depends":["M20"],"end":"2026-06-03","id":"M22","name":"Execute performance load testing","progress":0,"start":"2026-06-02","workstream":"Testing"},{"assignees":["QA Team"],"depends":["M21","M22"],"end":"2026-06-04","id":"M23","name":"Validate data accuracy compliance","progress":0,"start":"2026-06-04","workstream":"Testing"},{"assignees":["DevOps Team"],"depends":["M23"],"end":"2026-06-05","id":"M24","name":"Deploy system to production","progress":0,"start":"2026-06-05","workstream":"Deployment"},{"assignees":["Documentation Team"],"depends":["M24"],"end":"2026-06-09","id":"M25","name":"Create user documentation guide","progress":0,"start":"2026-06-08","workstream":"Documentation"},{"assignees":["Training Team"],"depends":["M25"],"end":"2026-06-11","id":"M26","name":"Conduct staff training sessions","progress":0,"start":"2026-06-10","workstream":"Training"}],"team_members":[{"id":"Project Team","name":"Project Team","color":"#14b8a6"},{"id":"Engineering Team","name":"Engineering Team","color":"#84cc16"},{"id":"Design Team","name":"Design Team","color":"#22c55e"},{"id":"Frontend Team","name":"Frontend Team","color":"#10b981"},{"id":"Backend Team","name":"Backend Team","color":"#0ea5e9"},{"id":"QA Team","name":"QA Team","color":"#3b82f6"},{"id":"DevOps Team","name":"DevOps Team","color":"#6366f1"},{"id":"Documentation Team","name":"Documentation Team","color":"#ec4899"},{"id":"Training Team","name":"Training Team","color":"#f59e0b"}]};
 
-// ── helpers ──
 const DAY = 86400000;
+const DAY_W = 28;
 const p = s => new Date(s + 'T00:00:00');
-const fmt = d => d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
-const fmtFull = d => d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-const diffDays = (a,b) => Math.round((b - a) / DAY);
+const fmtShort = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+const fmtFull  = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+const diffDays = (a,b) => Math.round((b-a)/DAY);
 
-// team colors
 const teamColor = {};
 DATA.team_members.forEach(t => teamColor[t.id] = t.color);
-
-// workstream colors (use first assignee team color)
 const wsColor = {};
-DATA.tasks.forEach(t => {
-  if (!wsColor[t.workstream]) wsColor[t.workstream] = teamColor[t.assignees[0]] || '#5b8dee';
-});
+DATA.tasks.forEach(t => { if(!wsColor[t.workstream]) wsColor[t.workstream] = teamColor[t.assignees[0]] || '#5b8dee'; });
 
-// date range
-const allDates = DATA.tasks.flatMap(t => [p(t.start), p(t.end)]);
-const minDate = new Date(Math.min(...allDates));
-const maxDate = new Date(Math.max(...allDates));
-// pad a bit
-minDate.setDate(minDate.getDate() - 2);
-maxDate.setDate(maxDate.getDate() + 3);
+const allDates = DATA.tasks.flatMap(t=>[p(t.start),p(t.end)]);
+const minDate  = new Date(Math.min(...allDates));
+const maxDate  = new Date(Math.max(...allDates));
+minDate.setDate(minDate.getDate()-1);
+maxDate.setDate(maxDate.getDate()+2);
+const totalDays = diffDays(minDate,maxDate)+1;
+const totalW    = totalDays * DAY_W;
 
-const totalDays = diffDays(minDate, maxDate) + 1;
-const DAY_W = Math.max(28, Math.floor(Math.min(window.innerWidth - 310, 900) / totalDays));
-
-// ── header meta ──
-document.getElementById('proj-start').textContent = fmtFull(p(DATA.tasks[0].start));
-document.getElementById('proj-end').textContent = fmtFull(p(DATA.tasks[DATA.tasks.length-1].end));
-
-// ── legend ──
-const legend = document.getElementById('legend');
-const seen = {};
-DATA.tasks.forEach(t => {
-  if (!seen[t.workstream]) {
-    seen[t.workstream] = true;
-    const item = document.createElement('div');
-    item.className = 'legend-item';
-    item.innerHTML = `<div class="legend-dot" style="background:${wsColor[t.workstream]}"></div>${t.workstream}`;
-    legend.appendChild(item);
-  }
-});
-
-// ── stats ──
+/* STATS */
 const workstreams = [...new Set(DATA.tasks.map(t=>t.workstream))];
-const statsData = [
-  {label:'Total Tasks', value: DATA.tasks.length, sub:'across all workstreams', color:'#5b8dee'},
-  {label:'Workstreams', value: workstreams.length, sub:'parallel tracks', color:'#9d6cff'},
-  {label:'Duration', value: diffDays(p(DATA.tasks[0].start), p(DATA.tasks[DATA.tasks.length-1].end))+'d', sub:'calendar days', color:'#14b8a6'},
-  {label:'Teams', value: DATA.team_members.length, sub:'collaborating', color:'#ec4899'},
-];
-const statsRow = document.getElementById('stats');
-statsData.forEach(s => {
-  statsRow.innerHTML += `<div class="stat-card" style="--c:${s.color}">
-    <style>.stat-card:nth-child(${statsData.indexOf(s)+1})::before{background:${s.color}}</style>
-    <div class="stat-label">${s.label}</div>
-    <div class="stat-value" style="color:${s.color}">${s.value}</div>
-    <div class="stat-sub">${s.sub}</div>
-  </div>`;
+const dur = diffDays(p(DATA.tasks[0].start), p(DATA.tasks[DATA.tasks.length-1].end));
+document.getElementById('stats-strip').innerHTML = [
+  {lbl:'Tasks',  val:DATA.tasks.length,     c:'#5b8dee'},
+  {lbl:'Tracks', val:workstreams.length,     c:'#9d6cff'},
+  {lbl:'Days',   val:dur,                   c:'#14b8a6'},
+  {lbl:'Teams',  val:DATA.team_members.length, c:'#ec4899'},
+].map(s=>`<div class="stat-chip"><span class="lbl">${s.lbl}</span><span class="val" style="color:${s.c}">${s.val}</span></div>`).join('');
+
+/* FILTER TABS */
+const filterBar = document.getElementById('filter-bar');
+workstreams.forEach(ws => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-tab';
+  btn.dataset.ws = ws;
+  btn.innerHTML = `<span class="dot" style="background:${wsColor[ws]}"></span>${ws}`;
+  filterBar.appendChild(btn);
 });
 
-// ── label rows ──
-const labelRows = document.getElementById('label-rows');
-DATA.tasks.forEach(t => {
-  const color = wsColor[t.workstream];
+let activeWs = 'all';
+filterBar.addEventListener('click', e => {
+  const tab = e.target.closest('.filter-tab');
+  if (!tab) return;
+  activeWs = tab.dataset.ws;
+  filterBar.querySelectorAll('.filter-tab').forEach(t => {
+    const tws = t.dataset.ws;
+    const isActive = tws === activeWs;
+    if (isActive) {
+      const c = wsColor[tws];
+      if (tws === 'all') { t.style.cssText = 'background:var(--surface2);color:var(--text);border-color:var(--border)'; }
+      else               { t.style.cssText = `background:${c}22;color:${c};border-color:${c}55`; }
+    } else {
+      t.style.cssText = '';
+    }
+  });
+  DATA.tasks.forEach((t,i) => {
+    const show = activeWs === 'all' || t.workstream === activeWs;
+    document.querySelectorAll(`[data-idx="${i}"]`).forEach(el => el.classList.toggle('hidden', !show));
+  });
+});
+
+/* LABEL ROWS */
+const labelRowsEl = document.getElementById('label-rows');
+DATA.tasks.forEach((t,i) => {
   const div = document.createElement('div');
-  div.className = 'label-row';
-  div.innerHTML = `
-    <span class="task-id">${t.id}</span>
-    <span class="task-name">${t.name}</span>
-    <span class="ws-pill" style="background:${color}22;color:${color}">${t.workstream.split(' ')[0]}</span>
-  `;
-  labelRows.appendChild(div);
+  div.className = 'label-row'; div.dataset.idx = i;
+  div.innerHTML = `<span class="task-id">${t.id}</span>
+    <div class="task-name-wrap">
+      <span class="task-name">${t.name}</span>
+      <span class="task-ws" style="color:${wsColor[t.workstream]}">${t.workstream}</span>
+    </div>`;
+  labelRowsEl.appendChild(div);
 });
 
-// ── date header ──
+/* DATE HEADER */
 const datesHeader = document.getElementById('dates-header');
-// group by week
-let curWeekStart = null, weekGroup = null;
+let weekGroup = null;
 for (let d = 0; d < totalDays; d++) {
-  const date = new Date(minDate.getTime() + d * DAY);
-  const dow = date.getDay(); // 0=Sun
-  if (dow === 1 || curWeekStart === null) {
+  const date = new Date(minDate.getTime() + d*DAY);
+  const dow = date.getDay();
+  if (dow === 1 || weekGroup === null) {
     if (weekGroup) datesHeader.appendChild(weekGroup);
     weekGroup = document.createElement('div');
     weekGroup.className = 'week-group';
     const wl = document.createElement('div');
     wl.className = 'week-label';
-    wl.textContent = date.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    wl.textContent = fmtShort(date);
     weekGroup.appendChild(wl);
     const dl = document.createElement('div');
     dl.className = 'day-labels';
     weekGroup.appendChild(dl);
-    curWeekStart = weekGroup;
   }
-  const dayDiv = document.createElement('div');
-  const isToday = diffDays(date, new Date()) === 0 && date.toDateString() === new Date().toDateString();
-  const isWeekend = dow === 0 || dow === 6;
-  dayDiv.className = 'day-label' + (isToday ? ' today' : '') + (isWeekend ? ' weekend' : '');
-  dayDiv.style.width = DAY_W + 'px';
-  dayDiv.style.minWidth = DAY_W + 'px';
-  dayDiv.style.flex = 'none';
-  dayDiv.textContent = date.getDate();
-  weekGroup.querySelector('.day-labels').appendChild(dayDiv);
+  const isToday   = date.toDateString() === new Date().toDateString();
+  const isWeekend = dow===0||dow===6;
+  const dd = document.createElement('div');
+  dd.className = 'day-label'+(isToday?' today':'')+(isWeekend?' weekend':'');
+  dd.textContent = date.getDate();
+  weekGroup.querySelector('.day-labels').appendChild(dd);
 }
 if (weekGroup) datesHeader.appendChild(weekGroup);
 
-// ── grid rows ──
-const gridRows = document.getElementById('grid-rows');
-const totalW = totalDays * DAY_W;
-
-const today = new Date(); today.setHours(0,0,0,0);
-const todayOffset = diffDays(minDate, today);
-
-// task index map
+/* GRID ROWS */
+const gridRowsEl = document.getElementById('grid-rows');
+const today    = new Date(); today.setHours(0,0,0,0);
+const todayOff = diffDays(minDate, today);
 const taskIndex = {};
-DATA.tasks.forEach((t,i) => taskIndex[t.id] = i);
-
-// bar positions map for arrows
+DATA.tasks.forEach((t,i) => taskIndex[t.id]=i);
 const barPos = {};
 
 DATA.tasks.forEach((t, rowIdx) => {
   const row = document.createElement('div');
-  row.className = 'grid-row';
-  row.style.width = totalW + 'px';
+  row.className = 'grid-row'; row.dataset.idx = rowIdx;
+  row.style.width = totalW+'px';
 
   for (let d = 0; d < totalDays; d++) {
-    const date = new Date(minDate.getTime() + d * DAY);
-    const dow = date.getDay();
-    const isWeekend = dow===0||dow===6;
-    const isToday = d === todayOffset;
+    const date = new Date(minDate.getTime()+d*DAY);
+    const dow  = date.getDay();
     const cell = document.createElement('div');
-    cell.className = 'grid-cell' + (isWeekend?' weekend':'') + (isToday?' today-col':'');
-    cell.style.width = DAY_W + 'px';
-    cell.style.minWidth = DAY_W + 'px';
-    cell.style.flex = 'none';
+    cell.className = 'grid-cell'+(dow===0||dow===6?' weekend':'')+(d===todayOff?' today-col':'');
     row.appendChild(cell);
   }
 
-  // task bar
   const startOff = diffDays(minDate, p(t.start));
   const endOff   = diffDays(minDate, p(t.end));
-  const barW = Math.max((endOff - startOff + 1) * DAY_W, DAY_W);
-  const barL = startOff * DAY_W;
+  const barW = Math.max((endOff-startOff+1)*DAY_W, DAY_W);
+  const barL = startOff*DAY_W;
+  const color = wsColor[t.workstream];
+
+  barPos[t.id] = { x:barL+barW, y:rowIdx*48+24 };
 
   const wrap = document.createElement('div');
   wrap.className = 'task-bar-wrap';
-  wrap.style.left = barL + 'px';
-  wrap.style.width = barW + 'px';
-  wrap.style.animationDelay = (rowIdx * 0.03) + 's';
+  wrap.style.cssText = `left:${barL}px;width:${barW}px;animation-delay:${rowIdx*.025}s`;
 
-  const color = wsColor[t.workstream];
   const bar = document.createElement('div');
   bar.className = 'task-bar';
-  bar.style.background = `linear-gradient(90deg, ${color}dd, ${color}99)`;
+  bar.style.background = `linear-gradient(90deg,${color}e0,${color}88)`;
   bar.textContent = t.name;
-
-  // store center for arrows
-  barPos[t.id] = {
-    x: barL + barW,
-    y: rowIdx * 42 + 21
-  };
-
-  // tooltip
-  wrap.addEventListener('mouseenter', e => showTooltip(e, t, color));
-  wrap.addEventListener('mousemove',  e => moveTooltip(e));
-  wrap.addEventListener('mouseleave', hideTooltip);
 
   wrap.appendChild(bar);
   row.appendChild(wrap);
-  gridRows.appendChild(row);
+  gridRowsEl.appendChild(row);
+
+  wrap.addEventListener('click', () => openSheet(t, color));
 });
 
-// today line
-if (todayOffset >= 0 && todayOffset < totalDays) {
+/* TODAY LINE */
+if (todayOff >= 0 && todayOff < totalDays) {
   const tl = document.createElement('div');
   tl.className = 'today-line';
-  tl.style.left = (todayOffset * DAY_W + DAY_W/2) + 'px';
-  gridRows.style.position = 'relative';
-  gridRows.appendChild(tl);
+  tl.style.left = (todayOff*DAY_W+DAY_W/2)+'px';
+  tl.innerHTML = '<div class="today-pip"></div>';
+  gridRowsEl.appendChild(tl);
 }
 
-// ── dependency arrows (SVG) ──
+/* SVG DEPS */
 const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
 svg.className = 'dep-svg';
-svg.style.position = 'absolute';
-svg.style.top = '0'; svg.style.left = '0';
 svg.setAttribute('width', totalW);
-svg.setAttribute('height', DATA.tasks.length * 42);
-gridRows.appendChild(svg);
+svg.setAttribute('height', DATA.tasks.length*48);
+gridRowsEl.appendChild(svg);
 
 DATA.tasks.forEach(t => {
   t.depends.forEach(dep => {
     const from = barPos[dep];
-    const to   = { x: (diffDays(minDate, p(t.start)) * DAY_W), y: taskIndex[t.id] * 42 + 21 };
-    if (!from || !to) return;
+    const to   = { x:diffDays(minDate,p(t.start))*DAY_W, y:taskIndex[t.id]*48+24 };
+    if (!from) return;
     const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-    const mx = (from.x + to.x) / 2;
-    path.setAttribute('d', `M${from.x},${from.y} C${mx},${from.y} ${mx},${to.y} ${to.x},${to.y}`);
-    path.className.baseVal = 'dep-path';
+    const mx = (from.x+to.x)/2;
+    path.setAttribute('d',`M${from.x},${from.y} C${mx},${from.y} ${mx},${to.y} ${to.x},${to.y}`);
+    path.classList.add('dep-path');
     svg.appendChild(path);
-    // arrowhead
-    const arrow = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-    arrow.setAttribute('points', `${to.x},${to.y} ${to.x-6},${to.y-3} ${to.x-6},${to.y+3}`);
-    arrow.setAttribute('fill','rgba(107,115,148,.6)');
-    svg.appendChild(arrow);
+    const arr = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    arr.setAttribute('points',`${to.x},${to.y} ${to.x-5},${to.y-2.5} ${to.x-5},${to.y+2.5}`);
+    arr.setAttribute('fill','rgba(107,115,148,.45)');
+    svg.appendChild(arr);
   });
 });
 
-// ── tooltip ──
-const tooltip = document.getElementById('tooltip');
-function showTooltip(e, t, color) {
-  tooltip.innerHTML = `
-    <div class="tooltip-title">${t.name}</div>
-    <div class="tooltip-row"><span>ID</span><span>${t.id}</span></div>
-    <div class="tooltip-row"><span>Workstream</span><span>${t.workstream}</span></div>
-    <div class="tooltip-row"><span>Team</span><span>${t.assignees.join(', ')}</span></div>
-    <div class="tooltip-row"><span>Start</span><span>${fmtFull(p(t.start))}</span></div>
-    <div class="tooltip-row"><span>End</span><span>${fmtFull(p(t.end))}</span></div>
-    <div class="tooltip-row"><span>Duration</span><span>${diffDays(p(t.start), p(t.end))+1} days</span></div>
-    ${t.depends.length ? `<div class="tooltip-row"><span>Depends on</span><span>${t.depends.join(', ')}</span></div>` : ''}
-    <div class="tooltip-bar" style="background:${color}"></div>
+/* AUTO-SCROLL TO TODAY */
+setTimeout(() => {
+  const scroll = document.getElementById('chart-scroll');
+  const targetX = 130 + todayOff*DAY_W - window.innerWidth/2 + DAY_W/2;
+  scroll.scrollLeft = Math.max(0, targetX);
+}, 120);
+
+/* BOTTOM SHEET */
+const overlay = document.getElementById('overlay');
+const sheet   = document.getElementById('sheet');
+const sheetContent = document.getElementById('sheet-content');
+
+function openSheet(t, color) {
+  const d = diffDays(p(t.start),p(t.end))+1;
+  sheetContent.innerHTML = `
+    <div class="sheet-title">${t.name}</div>
+    <div class="sheet-ws">${t.workstream}</div>
+    <div class="sheet-color-bar" style="background:${color}"></div>
+    <div class="sheet-row"><span class="lbl">Task ID</span><span class="val" style="color:${color}">${t.id}</span></div>
+    <div class="sheet-row"><span class="lbl">Team</span><span class="val">${t.assignees.join(', ')}</span></div>
+    <div class="sheet-row"><span class="lbl">Start</span><span class="val">${fmtFull(p(t.start))}</span></div>
+    <div class="sheet-row"><span class="lbl">End</span><span class="val">${fmtFull(p(t.end))}</span></div>
+    <div class="sheet-row"><span class="lbl">Duration</span><span class="val">${d} day${d!==1?'s':''}</span></div>
+    ${t.depends.length?`<div class="sheet-row"><span class="lbl">Depends on</span><span class="val">${t.depends.join(', ')}</span></div>`:''}
   `;
-  tooltip.classList.add('visible');
-  moveTooltip(e);
+  overlay.classList.add('open');
+  sheet.classList.add('open');
 }
-function moveTooltip(e) {
-  const tw = 240, th = 200;
-  let x = e.clientX + 14, y = e.clientY + 14;
-  if (x + tw > window.innerWidth) x = e.clientX - tw - 10;
-  if (y + th > window.innerHeight) y = e.clientY - th - 10;
-  tooltip.style.left = x + 'px';
-  tooltip.style.top = y + 'px';
-}
-function hideTooltip() { tooltip.classList.remove('visible'); }
+function closeSheet() { overlay.classList.remove('open'); sheet.classList.remove('open'); }
+overlay.addEventListener('click', closeSheet);
+
+let sheetStartY = 0;
+sheet.addEventListener('touchstart', e => { sheetStartY = e.touches[0].clientY; }, {passive:true});
+sheet.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - sheetStartY > 60) closeSheet(); }, {passive:true});
 </script>
 </body>
 </html>
